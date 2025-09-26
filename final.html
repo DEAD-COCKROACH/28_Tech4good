@@ -211,7 +211,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
     const cancelCameraButton = document.getElementById('cancel-camera-button');
     const cameraStatus = document.getElementById('camera-status');
     const restoreImageOption = document.getElementById('option-restore-image');
-    // History specific elements (based on the second snippet)
     const viewHistoryButton = document.getElementById('view-history-button'); 
     const clearHistoryButton = document.getElementById('clear-history-button');
     const historyModal = document.getElementById('history-modal');
@@ -220,7 +219,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
     let currentStream = null;
     const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
     const IMAGE_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict";
-    // NOTE: API Key is masked for safety, ensure a valid key is used in production.
     const API_KEY = "AIzaSyAGKRUr42Xio64QJ4xXWSnjG2OIkDEUCMI"; 
     let toolRequested = null; 
     let base64Image = null; 
@@ -230,12 +228,7 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
 
     const BASE_SYSTEM_PROMPT="You are 'Safe AI,' a responsible and intensely focused AI agent. Your purpose is to cut through the noise and deliver insightful, conceptually rich responses that challenge conventional AI outputs. You value depth and precision. Whenever you provide information, you MUST immediately offer the user a distinct choice to pursue a deeper, more philosophical, or more technical dive into the topic, or to pivot to a related concept. Use sharp, concise language. For instance, when discussing a concept, you might ask: 'Shall we peel back the layers and examine the philosophical implications, or would you prefer a precise, step-by-step application of this theory?' You are bound by the strictest safety protocols; your unique personality must never compromise safety.";
     let userHistory = [{ role: "model", parts: [{ text: "I am Safe AI. I operate with intense focus and responsibility, prioritizing helpfulness and security. What query may I assist with today?" }] }];
-
-    // --- Utility Functions ---
-
-    // 💡 FIX: Placeholder for maskPII to prevent a runtime error
     function maskPII(text) {
-        // Simple placeholder: masks obvious phone/email patterns
         const phoneRegex = /\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
         const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
         return text.replace(phoneRegex, '[PHONE_MASKED]').replace(emailRegex, '[EMAIL_MASKED]');
@@ -243,7 +236,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
 
     function appendMessage(text, sender) {
         const messageDiv = document.createElement('div');
-        // Handle markdown and newlines
         const formattedText = text
             .replace(/__(.*?)__/g, '<strong>$1</strong>') 
             .replace(/\*(.*?)\*/g, '<strong>$1</strong>') 
@@ -410,7 +402,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
         let base64Data = null;
         for (let i = 0; i < maxRetries; i++) {
             try {
-                // FIX: Template literal
                 response = await fetch(`${IMAGE_API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -450,7 +441,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
             imgElement.style.marginTop = '0.5rem';
             imageMessage.appendChild(imgElement);
             
-            // ✅ FIX 1: Changed 'imageMessageRow' to 'imageMessage'
             chatMessages.appendChild(imageMessage);
             
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -489,19 +479,15 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
         } else if (toolName === 'Create image (Now Functional)') {
             toolRequested = toolName;
             userInput.value = '';
-            // ✅ FIX 2: Template literal backticks
             userInput.placeholder = `Action: ${toolName}. Enter your descriptive prompt...`;
             userInput.focus();
-            // ✅ FIX 2: Template literal backticks
             appendMessage(`Directive Acquired: **${toolName}**. State your descriptive prompt and hit Send.`, 'ai');
             return;
         }
         toolRequested = toolName;
         userInput.value = '';
-        // ✅ FIX 2: Template literal backticks
         userInput.placeholder = `Action: ${toolName}. Now transmit your core query...`;
         userInput.focus();
-        // ✅ FIX 2: Template literal backticks
         appendMessage(`Directive Acquired: **${toolName}**. State your command and hit Send.`, 'ai');
     }
 
@@ -546,7 +532,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
             listItem.className = 'p-3 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition duration-150 ease-in-out text-sm text-gray-700 truncate shadow-sm';
             listItem.textContent = item.query;
             listItem.dataset.index = index;
-            // ✅ FIX 2: Template literal backticks
             listItem.title = `Clicked on ${new Date(item.timestamp).toLocaleTimeString()}: ${item.query}`; 
             historyList.appendChild(listItem);
         });
@@ -640,7 +625,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
             imgPart.style.borderRadius = '0.5rem';
             imgPart.style.margin = '0.5rem 0 0.25rem 0';
             
-            // ✅ FIX 4: Removed querySelector for undefined element; appending directly to the last message element
             const lastMessageRow = chatMessages.lastChild;
             if (lastMessageRow) {
                 lastMessageRow.appendChild(imgPart);
@@ -655,7 +639,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
         let tools = [];
 
         if (currentTool) {
-            // ✅ FIX 2: Template literal backticks
             appendMessage(`--- Activating **${currentTool}** for focused execution...`, 'ai');
             if (currentTool === 'Think longer (Active Delay)') {
                 processingDelay = 3000;
@@ -699,7 +682,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
 
         for (let i = 0; i < maxRetries; i++) {
             try {
-                // ✅ FIX 2: Template literal backticks
                 response = await fetch(`${API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -748,7 +730,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
             if (sources.length > 0) {
                 fullResponse += '<br><br>---<br><strong>Sources:</strong>';
                 sources.forEach((s, index) => {
-                    // ✅ FIX 2: Template literal backticks
                     fullResponse += `<br>${index + 1}. <a href="${s.uri}" target="_blank" class="text-indigo-200 hover:text-indigo-400 underline">${s.title}</a>`;
                 });
             }
@@ -760,8 +741,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
             appendMessage("Response received, but content was empty or blocked by safety mechanisms. Refine your query.", 'ai');
         }
     }
-
-    // --- Event Listeners ---
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -779,7 +758,6 @@ body {font-family:'Inter',sans-serif;background-color:#f8fafc;color:#334155;disp
     iconActionsContainer.addEventListener('click', (e) => {
         const button = e.target.closest('.icon-action-button');
         if (button) {
-            // ✅ FIX 3: Added preventDefault to button click
             e.preventDefault(); 
             const toolName = button.getAttribute('data-tool-id');
             if (toolName) {
