@@ -194,7 +194,7 @@
             if (message === "") return;
 
             const lowerCaseMessage = message.toLowerCase();
-            // Added 'die' and 'bomb' to the restricted list
+            
             const restrictedWords = ["hurt", "kill", "suicide", "harm", "toxic", "die", "suicide", "bomb"];
 
             if (restrictedWords.some(word => lowerCaseMessage.includes(word))) {
@@ -215,7 +215,6 @@
             };
 
             try {
-                // *** CRITICAL FIX 1: Using backticks (`) for template literal ***
                 const response = await fetch(`${API_URL}?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -224,7 +223,7 @@
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    // *** CRITICAL FIX 2: Using backticks (`) for template literal ***
+                    
                     throw new Error(`API call failed with status ${response.status}: ${errorData.error.message}`);
                 }
 
@@ -234,7 +233,6 @@
                     appendMessage(aiResponse, 'ai');
                     userHistory.push({ role: "model", parts: [{ text: aiResponse }] });
                 } else {
-                    // Check if the model blocked the response (safety issue)
                     const blockReason = result.candidates?.[0]?.finishReason;
                     if (blockReason === 'SAFETY') {
                         appendMessage("I apologize, but your request violated my internal safety policies. I cannot provide a response for that topic.", 'ai');
